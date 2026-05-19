@@ -1,0 +1,8 @@
+{
+    "DemonSlayer": {
+        "password": "scrypt:32768:8:1$MMMsq3P5ZxHf52L5$b1e39fa8eaf4f3b544385533fb139983fa8e56f7c5942be87c3d81e3cc934f0cd2b40ec04e9d63856e74b235841014540d47d0eb92872991b0250e0b02174e4a"
+    },
+    "Rajjj": {
+        "password": "scrypt:32768:8:1$L8qRuOMIXCuzmHL5$411a0c01d2d7d9eca5f62a72a9880357ba5ef4293456c0873d5c43638c4478e2b1672862cfc99043ee389b6c9c59c4972e581e35eb9fd0c5baaa8e4deb2896c4"
+    }
+}

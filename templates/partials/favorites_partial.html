@@ -1,0 +1,108 @@
+{% if favorite_files|length == 0 %}
+
+    <div class="empty-state">
+
+        <i data-lucide="star-off"></i>
+
+        <h3>No Favorite Files</h3>
+
+        <p>
+
+            Star important files
+            to access them quickly.
+
+        </p>
+
+    </div>
+
+{% else %}
+
+    {% for file in favorite_files %}
+
+        <div class="file-row">
+
+            <!-- NAME -->
+
+            <span
+                class="file-name"
+                onclick="
+                    previewFile(
+                        '{{ file.name }}',
+                        'uploads'
+                    )
+                "
+            >
+
+                <i
+                    data-lucide="star"
+                    class="favorited"
+                ></i>
+
+                <span>
+
+                    {{ file.name }}
+
+                </span>
+
+            </span>
+
+            <!-- TYPE -->
+
+            <span>
+
+                {{ file.type }}
+
+            </span>
+
+            <!-- DATE -->
+
+            <span>
+
+                {{ file.date }}
+
+            </span>
+
+            <!-- SIZE -->
+
+            <span>
+
+                {{ file.size }}
+
+            </span>
+
+            <!-- ACTIONS -->
+
+            <span class="file-actions">
+
+                <a
+                    href="/download/{{ file.name }}"
+                    download
+                    class="download-link"
+                >
+
+                    Download
+
+                </a>
+
+                <a
+                    href="#"
+                    class="delete-link"
+                    onclick="
+                        toggleFavorite(
+                            '{{ file.name }}',
+                            this
+                        )
+                    "
+                >
+
+                    Remove
+
+                </a>
+
+            </span>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}

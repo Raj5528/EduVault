@@ -1,0 +1,42 @@
+[
+    {
+        "action": "recovered",
+        "filename": "sample_pdf.pdf"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_pdf.pdf"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_ppt.pptx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_ppt.pptx"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_pdf.pdf"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_pdf.pdf"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_ppt.pptx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_ppt.pptx"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_ppt.pptx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_ppt.pptx"
+    }
+]

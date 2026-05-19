@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.env
+credentials/
+# Flask
+instance/
+*.db
+*.sqlite3
+
+# VS Code
+.vscode/
+
+# Mac/Linux
+.DS_Store
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Environment files
+.env.local
+.env.production
+
+# Uploads (optional)
+uploads/
+
+# Cache
+.cache/
+
+# Gunicorn
+gunicorn.pid
+
+# Python build files
+build/
+dist/
+*.egg-info/
+
+# Nginx temp
+*.swp

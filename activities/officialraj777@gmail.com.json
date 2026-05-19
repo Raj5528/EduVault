@@ -1,0 +1,38 @@
+[
+    {
+        "action": "recovered",
+        "filename": "sample_worksheet.xlsx"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_image.jpg"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_worksheet.xlsx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_image.jpg"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_worksheet.xlsx"
+    },
+    {
+        "action": "deleted forever",
+        "filename": "sample_document.docx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_worksheet.xlsx"
+    },
+    {
+        "action": "recovered",
+        "filename": "sample_worksheet.xlsx"
+    },
+    {
+        "action": "deleted",
+        "filename": "sample_worksheet.xlsx"
+    }
+]

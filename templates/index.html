@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}" />
+
+    <title>EduVault</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <div class="top-bar">
+      <h1 class="logo"><i data-lucide="lock"></i> EduVault</h1>
+
+      <ul class="nav-links">
+        <li>
+          <a href="{{ url_for('home') }}">Home</a>
+        </li>
+
+        <li>
+          <a href="{{ url_for('features') }}">Features</a>
+        </li>
+
+        <li>
+          <button class="btn btn-outline" onclick="openAuth()">Login</button>
+        </li>
+
+        <li>
+          <button class="btn btn-primary" onclick="openSignup()">Sign Up</button>
+        </li>
+      </ul>
+    </div>
+<!-- FLASH MESSAGES -->
+
+{% with messages =
+  get_flashed_messages(with_categories=true) %}
+  
+      {% if messages %}
+  
+          <div class="flash-container">
+  
+              {% for category, message in messages %}
+  
+                  <div class="flash {{ category }}">
+  
+                      {{ message }}
+  
+                  </div>
+  
+              {% endfor %}
+  
+          </div>
+  
+      {% endif %}
+  
+  {% endwith %}
+    <!-- HERO -->
+    <section class="hero fade-in">
+      <div class="hero-text">
+        <div class="badge">Secure. Simple. Smart.</div>
+
+        <h2>
+          Your Digital Vault for Everything
+          <span>That Matters</span>
+        </h2>
+
+        <p>Securely store, organize, and access your files anytime, anywhere.</p>
+
+        <div class="hero-buttons">
+          <button class="btn btn-primary" onclick="openSignup()">Get Started</button>
+
+          <a href="{{ url_for('features') }}"><button class="btn btn-outline">Learn More</button></a>
+        </div>
+
+        <div class="hero-features">
+          <span><i data-lucide="shield"></i> Secure</span>
+
+          <span><i data-lucide="zap"></i> Fast</span>
+
+          <span><i data-lucide="cloud"></i> Always Available</span>
+        </div>
+      </div>
+
+      <!-- DASHBOARD PREVIEW -->
+      <div class="dashboard">
+        <div class="dashboard-header">
+          <h3>My Vault</h3>
+          <i data-lucide="plus"></i>
+        </div>
+
+        <div class="dashboard-body">
+          <!-- SIDEBAR -->
+          <div class="sidebar">
+            <div class="sidebar-item active">
+              <i data-lucide="folder"></i> Files
+            </div>
+
+            <div class="sidebar-item">
+              <i data-lucide="star"></i> Favorites
+            </div>
+
+            <div class="sidebar-item">
+              <i data-lucide="trash"></i> Trash
+            </div>
+          </div>
+
+          <!-- FILE LIST -->
+          <div class="files">
+            <div class="file-card">
+              <i data-lucide="file-text"></i>
+              <span>Notes.pdf</span>
+            </div>
+
+            <div class="file-card">
+              <i data-lucide="image"></i>
+              <span>Design.png</span>
+            </div>
+
+            <div class="file-card">
+              <i data-lucide="file"></i>
+              <span>Project.zip</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features fade-in">
+      <h3>Why Choose EduVault?</h3>
+
+      <div class="cards">
+        <div class="card">
+          <div class="icon blue">
+            <i data-lucide="shield"></i>
+          </div>
+
+          <h4>Secure Storage</h4>
+
+          <p>Advanced encryption keeps your data safe.</p>
+        </div>
+
+        <div class="card">
+          <div class="icon green">
+            <i data-lucide="zap"></i>
+          </div>
+
+          <h4>Fast Access</h4>
+
+          <p>Upload and access files instantly.</p>
+        </div>
+
+        <div class="card">
+          <div class="icon orange">
+            <i data-lucide="folder"></i>
+          </div>
+
+          <h4>Organized Management</h4>
+
+          <p>Manage files with folders and smart search.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEPS -->
+    <section class="steps fade-in">
+      <h3>Simple Steps to Get Started</h3>
+
+      <div class="step-container">
+        <div class="step">
+          <i data-lucide="user-plus"></i>
+          <h4>Sign Up</h4>
+        </div>
+
+        <div class="step">
+          <i data-lucide="upload"></i>
+          <h4>Upload Files</h4>
+        </div>
+
+        <div class="step">
+          <i data-lucide="monitor"></i>
+          <h4>Access Anytime</h4>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta fade-in">
+      <h3>Start Storing Your Files Securely Today</h3>
+
+      <button class="btn btn-outline" onclick="openSignup()">Create Your Vault</button>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 EduVault | All Rights Reserved</p>
+    </footer>
+
+    <!-- AUTH MODAL -->
+    <div class="auth-modal" id="authModal">
+      <div class="auth-box">
+        <div class="close-btn" onclick="closeAuth()">&times;</div>
+
+        <!-- LEFT -->
+        <div class="auth-left">
+          <h2>EduVault</h2>
+
+          <p>Secure your files. Access anytime.</p>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="auth-right">
+          <!-- LOGIN FORM -->
+          <div id="loginForm" class="form active">
+            <h3>Login</h3>
+
+            <form action="{{ url_for('login') }}" method="POST">
+              <input type="text" name="username" placeholder="Username" required />
+
+              <div class="password-wrapper">
+                <input type="password" id="password" name="password" placeholder="Password" required />
+
+
+              </div>
+              <label class="show-password">
+
+                <input
+                    type="checkbox"
+                    onclick="togglePassword()"
+                >
+            
+                Show Password
+            
+            </label>
+
+              <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <div class="divider">OR</div>
+
+            <button class="google-btn" type="button" onclick="
+        window.location.href=
+        '/login/google'
+    ">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" />
+
+              Continue with Google
+            </button>
+
+            <p class="switch">
+              New user?
+              <span onclick="toggleForm()">Sign up</span>
+            </p>
+          </div>
+
+          <!-- SIGNUP FORM -->
+          <!-- SIGNUP FORM -->
+
+<div id="signupForm" class="form">
+
+  <h3>Sign Up</h3>
+
+  <form
+      action="{{ url_for('signup') }}"
+      method="POST"
+  >
+
+      <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          required
+      />
+
+      <div class="password-wrapper">
+
+          <input
+              type="password"
+              id="signupPassword"
+              name="password"
+              placeholder="Password"
+              required
+          />
+
+      </div>
+      <label class="show-password">
+
+        <input
+            type="checkbox"
+            onclick="toggleSignupPassword()"
+        >
+    
+        Show Password
+    
+    </label>
+
+      <button
+          type="submit"
+          class="btn btn-primary"
+      >
+
+          Create Account
+
+      </button>
+
+  </form>
+
+  <div class="divider">OR</div>
+
+  <button
+    class="google-btn"
+    type="button"
+    onclick="
+        window.location.href=
+        '/login/google'
+    "
+>
+
+    <img
+        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+        width="18"
+    />
+
+    Sign-up with Google
+
+</button>
+
+  <p class="switch">
+
+      Already have an account?
+
+      <span onclick="toggleForm()">
+
+          Login
+
+      </span>
+
+  </p>
+
+</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+
+    <script>
+      window.addEventListener('load', () => {
+
+        if (
+            window.location.hash === '#signup'
+        ) {
+    
+            openSignup()
+    
+            history.replaceState(
+                null,
+                null,
+                ' '
+            )
+        }
+    
+        if (
+            window.location.hash === '#login'
+        ) {
+    
+            openAuth()
+    
+            history.replaceState(
+                null,
+                null,
+                ' '
+            )
+        }
+    })
+    </script>
+
+    <script>
+      document.getElementById('authModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeAuth()
+        }
+      })
+    </script>
+
+    <script>
+      function openAuth() {
+        document.getElementById('authModal').classList.add('show')
+      }
+      
+      function closeAuth() {
+        document.getElementById('authModal').classList.remove('show')
+      }
+      
+      function toggleForm() {
+        const login = document.getElementById('loginForm')
+      
+        const signup = document.getElementById('signupForm')
+      
+        login.classList.toggle('active')
+        signup.classList.toggle('active')
+      }
+      
+      function openSignup() {
+        openAuth()
+      
+        document.getElementById('loginForm').classList.remove('active')
+      
+        document.getElementById('signupForm').classList.add('active')
+      }
+    </script>
+
+    <script>
+      lucide.createIcons()
+    </script>
+
+    <script>
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show')
+          }
+        })
+      })
+      
+      document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el))
+    </script>
+
+    <script>
+      window.addEventListener('scroll', () => {
+        const nav = document.querySelector('.top-bar')
+      
+        if (window.scrollY > 20) {
+          nav.classList.add('scrolled')
+        } else {
+          nav.classList.remove('scrolled')
+        }
+      })
+    </script>
+   <script>
+    function togglePassword() {
+
+      const passwordInput =
+          document.getElementById(
+              'password'
+          )
+  
+      if (
+          passwordInput.type === 'password'
+      ) {
+  
+          passwordInput.type = 'text'
+  
+      } else {
+  
+          passwordInput.type = 'password'
+      }
+  }
+  
+  
+  function toggleSignupPassword() {
+  
+      const passwordInput =
+          document.getElementById(
+              'signupPassword'
+          )
+  
+      if (
+          passwordInput.type === 'password'
+      ) {
+  
+          passwordInput.type = 'text'
+  
+      } else {
+  
+          passwordInput.type = 'password'
+      }
+  }
+   </script>
+  </body>
+</html>

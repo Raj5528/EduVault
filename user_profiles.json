@@ -1,0 +1,20 @@
+{
+    "DemonSlayer@local": {
+        "display_name": "DemonSlayer",
+        "custom_email": "DemonSlayer@loca",
+        "profile_picture": "/profile_pictures/DemonSlayer_local.jpg",
+        "theme": "light"
+    },
+    "Rajjj@local": {
+        "display_name": "Rajuda",
+        "custom_email": "",
+        "profile_picture": "",
+        "theme": "light"
+    },
+    "officialraj777@gmail.com": {
+        "display_name": "Raj",
+        "custom_email": "officialraj777@gmail.com",
+        "profile_picture": "https://lh3.googleusercontent.com/a/ACg8ocJpwMHhJmql6z5-dJvmu5K_qAahKx-2SNV6njuNZ5w8mG1eaO7F=s96-c",
+        "theme": "light"
+    }
+}

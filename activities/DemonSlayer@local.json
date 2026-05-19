@@ -1,0 +1,42 @@
+[
+    {
+        "action": "deleted",
+        "filename": "Rescued_document.pdf"
+    },
+    {
+        "action": "deleted",
+        "filename": "Rescued_document.docx"
+    },
+    {
+        "action": "uploaded",
+        "filename": "Rescued document.pdf"
+    },
+    {
+        "action": "uploaded",
+        "filename": "Rescued document.docx"
+    },
+    {
+        "action": "deleted",
+        "filename": "hello.docx"
+    },
+    {
+        "action": "deleted",
+        "filename": "EDUVAULT-synopis-RUPEENA.docx"
+    },
+    {
+        "action": "uploaded",
+        "filename": "hello.docx"
+    },
+    {
+        "action": "uploaded",
+        "filename": "EDUVAULT-synopis-RUPEENA.docx"
+    },
+    {
+        "action": "uploaded",
+        "filename": "sample_pdf.pdf"
+    },
+    {
+        "action": "uploaded",
+        "filename": "sample_image.jpg"
+    }
+]

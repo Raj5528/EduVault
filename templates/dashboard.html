@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduVault Dashboard</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='styles/dashboard.css') }}" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class=" {% if profile.theme == 'dark' %}dark-mode{% endif %} ">
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="logo-text">EduVault</h2>
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             class="logo-icon" />
+        <span class="close-btn" onclick="toggleSidebar()">✕</span>
+      </div>
+      <!-- MENU -->
+      <div class="menu">
+        <div class="menu-item active" onclick="switchView('dashboard', this)">
+          <i data-lucide="home"></i>
+          <span>Dashboard</span>
+        </div>
+        <div class="menu-item" onclick="switchView('favorites', this)">
+          <i data-lucide="star"></i>
+          <span>Favorites</span>
+        </div>
+        <div class="menu-item" onclick="switchView('trash', this)">
+          <i data-lucide="trash"></i>
+          <span>Trash</span>
+        </div>
+      </div>
+      <!-- LOGOUT -->
+      <div class="log-out" onclick="window.location.href='/logout'">
+        <i data-lucide="log-out"></i>
+        <span>Logout</span>
+      </div>
+    </div>
+<div class="mobile-menu-btn" onclick="toggleSidebar()">
+    ☰
+</div>
+    <!-- ================= MAIN ================= -->
+    <div class="main">
+      <!-- ================= SKELETON LOADER ================= -->
+      <div class="skeleton-screen" id="skeletonScreen">
+        <div class="skeleton skeleton-hero"></div>
+        <div class="skeleton-grid">
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+          <div class="skeleton skeleton-card"></div>
+        </div>
+        <div class="skeleton skeleton-table"></div>
+      </div>
+      <div id="realContent">
+        <!-- ================= DASHBOARD VIEW ================= -->
+        <div id="dashboardView" class="view active-view">
+          <!-- ================= HERO ================= -->
+          <div class="dashboard-hero">
+            <div>
+              <h1>Welcome Back 👋</h1>
+              <p>Manage your academic resources, assignments, notes and cloud files efficiently with EduVault.</p>
+            </div>
+            <button class="upload-btn hero-upload" onclick="openUpload()">
+              <i data-lucide="upload"></i>
+              Upload Files
+            </button>
+          </div>
+          <!-- ================= ANALYTICS ================= -->
+          <div class="analytics-grid">
+            <!-- TOTAL FILES -->
+            <div class="analytics-card">
+              <div class="analytics-icon files-card">
+                <i data-lucide="files"></i>
+              </div>
+              <div>
+                <h2>{{ files|length }}</h2>
+                <p>Total Files</p>
+              </div>
+            </div>
+            <!-- FAVORITES -->
+            <div class="analytics-card">
+              <div class="analytics-icon favorites-card">
+                <i data-lucide="star"></i>
+              </div>
+              <div>
+                <h2 id="favoriteCount">0</h2>
+                <p>Favorites</p>
+              </div>
+            </div>
+            <!-- STORAGE -->
+            <div class="analytics-card">
+              <div class="analytics-icon storage-card">
+                <i data-lucide="hard-drive"></i>
+              </div>
+              <div>
+                <h2>Cloud</h2>
+                <p>Storage Ready</p>
+              </div>
+            </div>
+          </div>
+          <!-- ================= TOPBAR ================= -->
+          <div class="topbar">
+            <!-- LEFT -->
+            <div class="topbar-left">
+              <h2>Recent Files</h2>
+              <p>Organize and manage your educational resources.</p>
+            </div>
+            <!-- RIGHT -->
+            <div class="topbar-right">
+              <!-- SEARCH -->
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Search files..."
+                       onkeyup="searchFiles()" />
+              </div>
+              <!-- NOTIFICATION -->
+              <div class="notification-btn">
+                <i data-lucide="bell"></i>
+                <span class="notification-dot"></span>
+              </div>
+              <!-- PROFILE -->
+              <div class="profile-box" onclick="openProfileModal()">
+                {% if session.get('user') %}
+                  {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture }}" class="profile-avatar-img" />
+                  {% else %}
+                    <div class="profile-avatar">{{ profile.display_name[0] }}</div>
+                  {% endif %}
+                  <div>
+                    <h4>{{ profile.display_name }}</h4>
+                    <p>{{ profile.custom_email or session.user.email }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <!-- ================= SMART WIDGETS ================= -->
+          <div class="smart-grid">
+            <!-- STORAGE -->
+            <div class="smart-card storage-widget">
+              <div class="smart-header">
+                <h3>Storage Usage</h3>
+                <i data-lucide="hard-drive"></i>
+              </div>
+              <!-- DONUT -->
+              <div class="storage-donut">
+                <svg width="180" height="180">
+                  <!-- BG -->
+                  <circle class="donut-bg" cx="90" cy="90" r="70"></circle>
+                  <!-- PROGRESS -->
+                  <circle class="donut-progress" cx="90" cy="90" r="70" style=" stroke-dashoffset: {{ storage_data.stroke_offset }}; "></circle>
+                </svg>
+                <!-- CENTER -->
+                <div class="donut-center">
+                  <h2>{{ storage_data.percent }}%</h2>
+                  <p>Used</p>
+                </div>
+              </div>
+              <!-- TEXT -->
+              <div class="storage-info">
+                <h4>{{ storage_data.used_gb }} GB / {{ storage_data.max_gb }} GB</h4>
+                <p>Cloud storage usage overview</p>
+              </div>
+            </div>
+            <!-- ACTIVITY -->
+            <div class="smart-card activity-widget">
+              <div class="smart-header">
+                <h3>Recent Activity</h3>
+                <i data-lucide="activity"></i>
+              </div>
+              <div class="activity-list">
+                {% for activity in activities %}
+                  <div class="activity-item">
+                    {% if activity.action == 'uploaded' %}
+                      <i data-lucide="upload" class="activity-upload"></i>
+                    {% elif activity.action == 'deleted' %}
+                      <i data-lucide="trash-2" class="activity-delete"></i>
+                    {% elif activity.action == 'recovered' %}
+                      <i data-lucide="rotate-ccw" class="activity-recover"></i>
+                    {% endif %}
+                    <div>
+                      <h4>
+                        {{ activity.filename }}
+                        {{ activity.action }}
+                      </h4>
+                      <p>Recent activity</p>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <!-- ================= CATEGORIES ================= -->
+          <div class="categories">
+            <div class="category active-category" onclick="filterFiles('all', this)">
+              <i data-lucide="layout-grid"></i>
+              <p>All</p>
+            </div>
+            <div class="category" onclick="filterFiles('pdf', this)">
+              <i data-lucide="file-text"></i>
+              <p>PDF</p>
+            </div>
+            <div class="category" onclick="filterFiles('docx', this)">
+              <i data-lucide="file"></i>
+              <p>DOCX</p>
+            </div>
+            <div class="category" onclick="filterFiles('image', this)">
+              <i data-lucide="image"></i>
+              <p>Images</p>
+            </div>
+            <div class="category" onclick="filterFiles('ppt', this)">
+              <i data-lucide="presentation"></i>
+              <p>PPT</p>
+            </div>
+            <div class="category" onclick="filterFiles('excel', this)">
+              <i data-lucide="sheet"></i>
+              <p>Excel</p>
+            </div>
+          </div>
+          <!-- ================= FILES SECTION ================= -->
+          <div class="files-section">
+            <div class="files-header">
+              <!-- LEFT -->
+              <div class="files-title">
+                <h2>Recent Uploads</h2>
+                <p>Browse and manage your latest uploaded files.</p>
+              </div>
+              <!-- RIGHT -->
+              <div class="files-controls">
+                <!-- SORT -->
+                <div class="custom-select">
+                  <i data-lucide="arrow-up-down"></i>
+                  <select onchange="sortFiles(this.value)">
+                    <option value="date">Sort by Date</option>
+                    <option value="name">Sort by Name</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- TABLE -->
+            <div class="file-table">
+              <div class="file-row header">
+                <span>Name</span>
+                <span>Type</span>
+                <span>Date</span>
+                <span>Size</span>
+                <span>Actions</span>
+              </div>
+              {% for file in files %}
+                <div class=" file-row file-item extra-file  {% if loop.index > 6 %}hidden-file{% endif %} "
+                     data-type="{{ file.type }}"
+                     data-name="{{ file.name }}"
+                     data-timestamp="{{ file.timestamp }}">
+                  <!-- NAME -->
+                  <span class="file-name" onclick="previewFile('{{ file.name }}', 'uploads')">
+                    {% if file.type == 'pdf' %}
+                      <i data-lucide="file-text" class="pdf-icon"></i>
+                    {% elif file.type == 'docx' %}
+                      <i data-lucide="file" class="docx-icon"></i>
+                    {% elif file.type == 'image' %}
+                      <i data-lucide="image" class="image-icon"></i>
+                    {% elif file.type == 'ppt' %}
+                      <i data-lucide="presentation" class="ppt-icon"></i>
+                    {% elif file.type == 'excel' %}
+                      <i data-lucide="sheet" class="excel-icon"></i>
+                    {% else %}
+                      <i data-lucide="file" class="other-icon"></i>
+                    {% endif %}
+                    <span>{{ file.name }}</span>
+                  </span>
+                  <!-- TYPE -->
+                  <span>{{ file.type }}</span>
+                  <!-- DATE -->
+                  <span>{{ file.date }}</span>
+                  <!-- SIZE -->
+                  <span>{{ file.size }}</span>
+                  <!-- ACTIONS -->
+                  <span class="file-actions">
+                    <i data-lucide="star"
+                       class=" favorite-btn {% if file.name in favorites %}favorited{% endif %} "
+                       onclick="toggleFavorite('{{ file.name }}', this)"></i>
+                    <a href="/download/{{ file.name }}" download class="download-link">Download</a>
+                      <a
+    href="#"
+    class="download-link"
+    onclick="
+        shareFile(
+            '{{ file.name }}'
+        )
+    "
+>
+
+    Share
+
+</a>
+                    <a href="#"
+                       class="delete-link"
+                       onclick=" deleteFile( '{{ file.name }}', this ) ">Delete</a>
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+            {% if files|length > 6 %}
+              <button class="view-more-btn" onclick="toggleViewMore()">
+                <span id="viewMoreText">View More</span>
+              </button>
+            {% endif %}
+          </div>
+        </div>
+        <!-- FAVORITES -->
+        <div id="favoritesView" class="view">
+          <div class="trash-header">
+            <div>
+              <h2>Favorite Files</h2>
+              <p>Your starred and important files.</p>
+            </div>
+          </div>
+          <div class="file-table">
+            <div class="file-row header">
+              <span>Name</span>
+              <span>Type</span>
+              <span>Date</span>
+              <span>Size</span>
+              <span>Actions</span>
+            </div>
+            <div id="favoritesContainer">
+            {% if favorite_files|length == 0 %}
+              <div class="empty-state">
+                <i data-lucide="star-off"></i>
+                <h3>No Favorite Files</h3>
+                <p>Star important files to access them quickly.</p>
+              </div>
+            {% else %}
+              {% for file in favorite_files %}
+              <div class="file-row">
+
+                <!-- NAME -->
+            
+                <span
+                    class="file-name"
+                    onclick="
+                        previewFile(
+                            '{{ file.name }}',
+                            'uploads'
+                        )
+                    "
+                >
+            
+                    <i
+                        data-lucide="star"
+                        class="favorited"
+                    ></i>
+            
+                    <span>
+            
+                        {{ file.name }}
+            
+                    </span>
+            
+                </span>
+            
+                <!-- TYPE -->
+            
+                <span>
+            
+                    {{ file.type }}
+            
+                </span>
+            
+                <!-- DATE -->
+            
+                <span>
+            
+                    {{ file.date }}
+            
+                </span>
+            
+                <!-- SIZE -->
+            
+                <span>
+            
+                    {{ file.size }}
+            
+                </span>
+            
+                <!-- ACTIONS -->
+            
+                <span class="file-actions">
+            
+                    <a
+                        href="/download/{{ file.name }}"
+                        download
+                        class="download-link"
+                    >
+            
+                        Download
+            
+                    </a>
+            
+                    <a
+                        href="#"
+                        class="delete-link"
+                        onclick="
+                            toggleFavorite(
+                                '{{ file.name }}',
+                                this
+                            )
+                        "
+                    >
+            
+                        Remove
+            
+                    </a>
+            
+                </span>
+            
+            </div>
+              {% endfor %}
+            {% endif %}
+
+          </div>
+          </div>
+        </div>
+        <!-- TRASH -->
+        <div id="trashView" class="view">
+          <div class="trash-header">
+            <div>
+              <h2>Trash Bin</h2>
+              <p>
+                Recover or permanently
+                delete files.
+              </p>
+            </div>
+            <div class="trash-actions">
+              <a href="/recover-all" class="recover-all-btn">
+                <i data-lucide="rotate-ccw"></i>
+                Recover All
+              </a>
+              <a href="/delete-all" class="delete-all-btn">
+                <i data-lucide="trash-2"></i>
+                Delete All
+              </a>
+            </div>
+          </div>
+          <div class="file-table">
+            <div class="file-row header">
+              <span>Name</span>
+              <span>Recover</span>
+              <span>Delete Forever</span>
+            </div>
+            {% if trash_files|length == 0 %}
+              <div class="empty-state">
+                <i data-lucide="trash-2"></i>
+                <h3>Trash is Empty</h3>
+                <p>
+                  Deleted files will
+                  appear here before
+                  permanent removal.
+                </p>
+              </div>
+            {% else %}
+              {% for file in trash_files %}
+                <div class="file-row">
+                  <!-- NAME -->
+                  <span class="file-name"
+                        onclick=" previewFile( '{{ file.name }}', 'trash' ) ">
+                    <i data-lucide="trash"></i>
+                    <span>{{ file.name }}</span>
+                  </span>
+                  <!-- RECOVER -->
+                  <span>
+                    <a href="#"
+                       class="download-link"
+                       onclick=" recoverFile( '{{ file.name }}', this ) ">Recover</a>
+                  </span>
+                  <!-- DELETE FOREVER -->
+                  <span>
+                    <a href="#"
+                       class="delete-link"
+                       onclick=" permanentDeleteFile( '{{ file.name }}', this ) ">Delete Forever</a>
+                  </span>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        <!-- ================= UPLOAD MODAL ================= -->
+        <div class="upload-modal" id="uploadModal">
+          <div class="upload-box" id="dropZone">
+            <span class="close-upload" onclick="closeUpload()">✕</span>
+            <h3>Upload Files</h3>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+              <div class="upload-area" id="uploadArea">
+                <p>Drag & Drop files here</p>
+                <span>or</span>
+                <button type="button" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                <input type="file" id="fileInput" name="file" multiple hidden required />
+              </div>
+              <div class="file-preview" id="filePreview"></div>
+              <!-- ================= UPLOAD PROGRESS ================= -->
+              <div class="upload-progress-container" id="uploadProgressContainer">
+                <div class="upload-progress-bar">
+                  <div class="upload-progress-fill" id="uploadProgressFill"></div>
+                </div>
+                <p id="uploadProgressText">Ready to upload</p>
+              </div>
+              <button class="upload-confirm" type="submit">Upload</button>
+            </form>
+          </div>
+        </div>
+        <!-- ================= TOAST NOTIFICATIONS ================= -->
+        {% with messages=get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="toast-container">
+              {% for category, message in messages %}
+                <div class="toast toast-{{ category }}">
+                  {% if category == 'success' %}
+                    <i data-lucide="check-circle"></i>
+                  {% else %}
+                    <i data-lucide="trash-2"></i>
+                  {% endif %}
+                  <span>{{ message }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <!-- SCRIPT -->
+        <!-- ================= PREVIEW MODAL ================= -->
+        <div class="preview-modal" id="previewModal">
+          <span class="close-preview" onclick="closePreview()">✕</span>
+          <div class="preview-box">
+            <div id="previewContent"></div>
+          </div>
+        </div>
+        <!-- PROFILE MODAL -->
+        <div class="profile-modal" id="profileModal">
+          <div class="profile-modal-box">
+            <!-- CLOSE -->
+            <div class="profile-close-btn" onclick="closeProfileModal()">&times;</div>
+            <!-- PROFILE IMAGE -->
+            <div class="profile-image-wrapper">
+              {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture }}" class="profile-modal-img" />
+              {% else %}
+                <div class="profile-modal-avatar">{{ profile.display_name[0] }}</div>
+              {% endif %}
+              <!-- EDIT BUTTON -->
+              <form action="{{ url_for("change_profile_picture") }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="profilePictureForm">
+                <label for="profilePictureInput" class="profile-edit-btn">
+                  <i data-lucide="pencil"></i>
+                </label>
+                <input type="file"
+                       id="profilePictureInput"
+                       name="profile_picture"
+                       accept="image/*"
+                       hidden
+                       onchange=" document .getElementById( 'profilePictureForm' ) .submit() " />
+              </form>
+            </div>
+            <!-- USER INFO -->
+            <h2>{{ profile.display_name }}</h2>
+            <p class="profile-email">{{ profile.custom_email or session.user.email }}</p>
+            <!-- USERNAME -->
+            <div class="profile-section">
+              <label class="profile-label">Username</label>
+              <form action="{{ url_for("change_display_name") }}"
+                    method="POST"
+                    class="profile-inline-form">
+                <input type="text"
+                       name="display_name"
+                       value="{{ profile.display_name }}"
+                       class="profile-input"
+                       required />
+                <button type="submit" class="profile-save-btn">Save</button>
+              </form>
+            </div>
+            <!-- EMAIL -->
+            <div class="profile-section">
+              <label class="profile-label">Email</label>
+              <form action="{{ url_for('change_email') }}"
+                    method="POST"
+                    class="profile-inline-form">
+                <input type="email"
+                       name="custom_email"
+                       value="{{ profile.custom_email or session.user.email }}"
+                       class="profile-input"
+                       required />
+                <button type="submit" class="profile-save-btn">Save</button>
+              </form>
+            </div>
+            <!-- DARK MODE -->
+            <button class="profile-action-btn" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+            <!-- LOGOUT -->
+            <button class="profile-action-btn logout-btn"
+                    onclick=" window.location.href= '{{ url_for("logout") }}' ">Logout</button>
+          </div>
+        </div>
+        <script src="{{ url_for('static', filename='script/dashboard.js') }}"></script>
+        <script>lucide.createIcons()</script>
+      </body>
+    </html>
